@@ -1,4 +1,8 @@
-require 'celluloid'
+begin
+  require 'celluloid'
+rescue LoadError
+  # Sidekiq 4.2+
+end
 require 'sidekiq'
 require 'sidekiq/fetch'
 
@@ -48,7 +52,7 @@ module Sidekiq
         if qcmd.size > 1
           retrieve_work_for_queues qcmd
         else
-          sleep(Sidekiq::QueuePause.retry_after || Sidekiq::Fetcher::TIMEOUT)
+          sleep(Sidekiq::QueuePause.retry_after || Sidekiq::BasicFetch::TIMEOUT)
           nil
         end
       end
@@ -61,7 +65,7 @@ module Sidekiq
       def unpaused_queues_cmd
         queues = queues_cmd
         queues.reject do |q|
-          q != Sidekiq::Fetcher::TIMEOUT &&
+          q != Sidekiq::BasicFetch::TIMEOUT &&
             Sidekiq::QueuePause.paused?(q.gsub('queue:', ''), Sidekiq::QueuePause.process_key)
         end
       end
