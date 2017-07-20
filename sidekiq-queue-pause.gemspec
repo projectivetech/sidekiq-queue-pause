@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name          = 'sidekiq-queue-pause'
-  s.version       = '0.0.1'
+  s.version       = '0.0.2'
   s.summary       = 'Pause a Sidekiq queue'
   s.description   = 'Let\'s you pause/unpause individual sidekiq queues.'
   s.license       = 'MIT'
@@ -10,6 +10,6 @@ Gem::Specification.new do |s|
 
   s.require_paths = ['lib']
   s.files         = Dir['lib/**/*rb']
-  
+
   s.add_dependency 'sidekiq', '>= 4.0', '< 5.0'
 end
