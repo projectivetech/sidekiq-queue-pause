@@ -31,7 +31,7 @@ module Sidekiq
       end
 
       def paused?(queue, pkey = nil)
-        Sidekiq.redis { |it| it.exists rkey(queue, pkey) }
+        Sidekiq.redis { |it| it.exists? rkey(queue, pkey) }
       end
 
       def unpause_all
