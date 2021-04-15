@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name          = 'sidekiq-queue-pause'
-  s.version       = '0.0.3'
+  s.version       = '0.0.4'
   s.summary       = 'Pause a Sidekiq queue'
   s.description   = 'Let\'s you pause/unpause individual sidekiq queues.'
   s.license       = 'MIT'
