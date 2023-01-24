@@ -1,0 +1,16 @@
+---
+include:
+  - "**/*.rb"
+exclude:
+  - test/**/*
+  - vendor/**/*
+  - ".bundle/**/*"
+require: []
+domains: []
+reporters:
+  - standardrb
+  - require_not_found
+require_paths: []
+plugins:
+  - solargraph-standardrb
+max_files: 5000
