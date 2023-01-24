@@ -57,11 +57,16 @@ module Sidekiq
         UnitOfWork.new(*work) if work
       end
 
+      # Returns the list of unpause queue names.
+      #
+      # @return [Array<String>] The list of unpaused queue names.
       def unpaused_queues_cmd
         queues = queues_cmd
         queues.reject do |q|
-          q != Sidekiq::BasicFetch::TIMEOUT &&
-            Sidekiq::QueuePause.paused?(q.gsub("queue:", ""), Sidekiq::QueuePause.process_key)
+          next if q.is_a?(Integer)
+          next if q.is_a?(Hash)
+
+          Sidekiq::QueuePause.paused?(q.gsub("queue:", ""), Sidekiq::QueuePause.process_key)
         end
       end
     end
