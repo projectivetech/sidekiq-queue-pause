@@ -1,21 +1,16 @@
-begin
-  require 'celluloid'
-rescue LoadError
-  # Sidekiq 4.2+
-end
-require 'sidekiq'
-require 'sidekiq/fetch'
+require "sidekiq"
+require "sidekiq/fetch"
 
 module Sidekiq
   module QueuePause
-    PREFIX = 'queue_pause'
+    PREFIX = "queue_pause"
 
     class << self
       attr_accessor :retry_after
-      attr_writer   :process_key
+      attr_writer :process_key
 
       def process_key(&block)
-        if block_given?
+        if block
           @process_key = block
         else
           @process_key.is_a?(Proc) ? @process_key.call : @process_key
@@ -62,11 +57,16 @@ module Sidekiq
         UnitOfWork.new(*work) if work
       end
 
+      # Returns the list of unpause queue names.
+      #
+      # @return [Array<String>] The list of unpaused queue names.
       def unpaused_queues_cmd
         queues = queues_cmd
         queues.reject do |q|
-          q != Sidekiq::BasicFetch::TIMEOUT &&
-            Sidekiq::QueuePause.paused?(q.gsub('queue:', ''), Sidekiq::QueuePause.process_key)
+          next if q.is_a?(Integer)
+          next if q.is_a?(Hash)
+
+          Sidekiq::QueuePause.paused?(q.gsub("queue:", ""), Sidekiq::QueuePause.process_key)
         end
       end
     end
