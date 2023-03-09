@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sidekiq-queue-pause (0.1.0)
+    sidekiq-queue-pause (0.1.1)
       sidekiq (>= 6.0, < 7.0)
 
 GEM
@@ -89,12 +89,12 @@ GEM
       method_source (~> 1.0)
     public_suffix (5.0.1)
     racc (1.6.2)
-    rack (2.2.6.2)
+    rack (2.2.6.3)
     rainbow (3.1.1)
     rb-fsevent (0.11.2)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    redis (4.8.0)
+    redis (4.8.1)
     regexp_parser (2.6.2)
     reverse_markdown (2.1.1)
       nokogiri
