@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.files = Dir["lib/**/*rb"]
 
-  s.add_dependency "sidekiq", ">= 6.0", "< 7.0"
+  s.add_dependency "sidekiq", ">= 6.0", "< 8.0"
 
   s.add_development_dependency "rspec", "~> 3"
   s.add_development_dependency "simplecov", "~> 0.21"
