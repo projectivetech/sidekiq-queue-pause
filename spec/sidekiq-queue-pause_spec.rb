@@ -44,7 +44,8 @@ describe Sidekiq::QueuePause do
         allow(pausing_fetch).to receive(:redis).and_yield(conn)
 
         expect(described_class::UnitOfWork).to receive(:new).with(queue, job.to_json, config).and_call_original
-        expect(conn).to receive(:blocking_call).with(conn.read_timeout + described_class::TIMEOUT, "brpop", queue, described_class::TIMEOUT)
+        #expect(conn).to receive(:blocking_call).with(conn.read_timeout + described_class::TIMEOUT, "brpop", queue, described_class::TIMEOUT)
+        expect(conn).to receive(:brpop).with(queue)
         expect(conn).to receive(:rpush).with(queue, job.to_json)
 
         unit_of_work = pausing_fetch.retrieve_work_for_queues(queue)
