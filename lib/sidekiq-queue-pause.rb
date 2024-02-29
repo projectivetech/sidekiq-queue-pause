@@ -54,7 +54,7 @@ module Sidekiq
 
       def retrieve_work_for_queues(qcmd)
         #queue, job = redis { |conn| conn.blocking_call(conn.read_timeout + TIMEOUT, "brpop", *qcmd, TIMEOUT) }
-        queue, job = redis { |conn| conn.brpop(*qcmd) }
+        queue, job = Sidekiq.redis { |conn| conn.brpop(*qcmd) }
         UnitOfWork.new(queue, job, config) if queue
       end
 

@@ -41,7 +41,7 @@ describe Sidekiq::QueuePause do
 
       it "does not raise a `NoMethodError: undefined method `redis' for nil:NilClass` due to lack of `config`" do
         allow(config).to receive(:redis).and_yield(conn)
-        allow(pausing_fetch).to receive(:redis).and_yield(conn)
+        allow(Sidekiq).to receive(:redis).and_yield(conn)
 
         expect(described_class::UnitOfWork).to receive(:new).with(queue, job.to_json, config).and_call_original
         #expect(conn).to receive(:blocking_call).with(conn.read_timeout + described_class::TIMEOUT, "brpop", queue, described_class::TIMEOUT)
