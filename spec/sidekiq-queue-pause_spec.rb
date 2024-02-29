@@ -32,5 +32,25 @@ describe Sidekiq::QueuePause do
         end
       end
     end
+
+    describe "reenqueueing a unit of work" do
+      let(:conn) { double("redis connection", read_timeout: 5, blocking_call: queue_and_work, brpop: queue_and_work) }
+      let(:job) { {queue: "some_queue", retry: true} }
+      let(:queue) { "queue:#{queue_name}" }
+      let(:queue_and_work) { [queue, job.to_json] }
+
+      it "does not raise a `NoMethodError: undefined method `redis' for nil:NilClass` due to lack of `config`" do
+        allow(config).to receive(:redis).and_yield(conn)
+        allow(pausing_fetch).to receive(:redis).and_yield(conn)
+
+        expect(described_class::UnitOfWork).to receive(:new).with(queue, job.to_json, config).and_call_original
+        expect(conn).to receive(:blocking_call).with(conn.read_timeout + described_class::TIMEOUT, "brpop", queue, described_class::TIMEOUT)
+        expect(conn).to receive(:rpush).with(queue, job.to_json)
+
+        unit_of_work = pausing_fetch.retrieve_work_for_queues(queue)
+
+        expect { unit_of_work.requeue }.to_not raise_error
+      end
+    end
   end
 end
