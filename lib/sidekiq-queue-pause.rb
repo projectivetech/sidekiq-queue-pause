@@ -55,7 +55,7 @@ module Sidekiq
       def retrieve_work_for_queues(qcmd)
         #queue, job = redis { |conn| conn.blocking_call(conn.read_timeout + TIMEOUT, "brpop", *qcmd, TIMEOUT) }
         queue, job = Sidekiq.redis { |conn| conn.brpop(*qcmd) }
-        UnitOfWork.new(queue, job, config) if queue
+        UnitOfWork.new(queue, job, Sidekiq) if queue
       end
 
       # Returns the list of unpause queue names.
