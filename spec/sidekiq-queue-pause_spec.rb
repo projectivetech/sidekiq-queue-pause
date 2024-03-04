@@ -3,9 +3,28 @@ require "spec_helper"
 describe Sidekiq::QueuePause do
   describe Sidekiq::QueuePause::PausingFetch do
     let(:queue_name) { "some_queue" }
-    let(:config) { {queues: [queue_name], strict: true} }
+    let(:logger) { double("logger") }
+    let(:job) { {queue: "some_queue", retry: true} }
+    let(:queue) { "queue:#{queue_name}" }
+    let(:queue_and_work) { [queue, job.to_json] }
+    let(:conn) { double("redis connection", read_timeout: 5, blocking_call: queue_and_work, brpop: queue_and_work) }
+    let(:config) { OpenStruct.new(queues: [queue_name], strict: true, logger: logger, redis: conn) }
 
     subject(:pausing_fetch) { described_class.new(config) }
+
+    describe "instance methods from Component" do
+      it "responds to `logger`" do
+        expect(pausing_fetch).to respond_to(:logger)
+      end
+
+      it "responds to `redis`" do
+        expect(pausing_fetch).to respond_to(:redis)
+      end
+
+      it "config is not a `#{Hash}`" do
+        expect(pausing_fetch.config).not_to be_a(Hash)
+      end
+    end
 
     describe "#unpause_queues_cmd" do
       context "with Sidekiq > 6.5.6 the queues list can contain Hashes" do
@@ -34,10 +53,6 @@ describe Sidekiq::QueuePause do
     end
 
     describe "reenqueueing a unit of work" do
-      let(:conn) { double("redis connection", read_timeout: 5, blocking_call: queue_and_work, brpop: queue_and_work) }
-      let(:job) { {queue: "some_queue", retry: true} }
-      let(:queue) { "queue:#{queue_name}" }
-      let(:queue_and_work) { [queue, job.to_json] }
 
       it "does not raise a `NoMethodError: undefined method `redis' for nil:NilClass` due to lack of `config`" do
         allow(Sidekiq).to receive(:redis).and_yield(conn)
