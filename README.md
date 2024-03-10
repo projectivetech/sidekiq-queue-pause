@@ -8,7 +8,7 @@ Initializer:
 
 ```ruby
 Sidekiq.configure_server do |config|
-  Sidekiq.options[:fetch] = Sidekiq::QueuePause::PausingFetch.new(Sidekiq.options)
+  Sidekiq.options[:fetch] = Sidekiq::QueuePause::PausingFetch.new(Sidekiq)
 
   # Optionally, you may set some unique key identifying the
   # Sidekiq process you want to control. This (server) process will
